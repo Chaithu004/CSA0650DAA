@@ -1,0 +1,52 @@
+#include <stdio.h>
+
+struct Item {
+    int weight;
+    int value;
+};
+
+void knapsack(struct Item items[], int n, int capacity) {
+    double ratio[n];
+    for (int i = 0; i < n; i++)
+        ratio[i] = (double)items[i].value / items[i].weight;
+
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (ratio[i] < ratio[j]) {
+                double tempRatio = ratio[i];
+                ratio[i] = ratio[j];
+                ratio[j] = tempRatio;
+                struct Item tempItem = items[i];
+                items[i] = items[j];
+                items[j] = tempItem;
+            }
+        }
+    }
+
+    int currentWeight = 0;
+    double totalValue = 0.0;
+
+    for (int i = 0; i < n; i++) {
+        if (currentWeight + items[i].weight <= capacity) {
+            currentWeight += items[i].weight;
+            totalValue += items[i].value;
+        } else {
+            int remain = capacity - currentWeight;
+            totalValue += items[i].value * ((double)remain / items[i].weight);
+            break;
+        }
+    }
+
+    printf("Maximum value in knapsack = %.2f\n", totalValue);
+}
+
+int main() {
+	printf("B.chaithanya-192210331\n");
+    int capacity = 50;
+    struct Item items[] = {{10, 60}, {20, 100}, {30, 120}};
+    int n = sizeof(items) / sizeof(items[0]);
+
+    knapsack(items, n, capacity);
+
+    return 0;
+}
