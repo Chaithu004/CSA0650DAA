@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+
+int tsp(int graph[V][V], int mask, int pos, int n, int dp[V][1 << V]) {
+    if (mask == (1 << n) - 1) {
+        return graph[pos][0]; // Return to starting city
+    }
+
+    if (dp[pos][mask] != -1) {
+        return dp[pos][mask];
+    }
+
+    int ans = INT_MAX;
+
+    for (int city = 0; city < n; city++) {
+        if ((mask & (1 << city)) == 0) {
+            int newAns = graph[pos][city] + tsp(graph, mask | (1 << city), city, n, dp);
+            if (newAns < ans) {
+                ans = newAns;
+            }
+        }
+    }
+
+    return dp[pos][mask] = ans;
+}
+
+int main() {
+	 printf("B.chaithanya-192210331\n");
+    int graph[V][V] = {
+        {0, 10, 15, 20},
+        {10, 0, 35, 25},
+        {15, 35, 0, 30},
+        {20, 25, 30, 0}
+    };
+
+    int dp[V][1 << V];
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < (1 << V); j++) {
+            dp[i][j] = -1;
+        }
+    }
+
+    printf("The minimum cost of the Travelling Salesman Problem is: %d\n", tsp(graph, 1, 0, V, dp));
+
+    return 0;
+}
